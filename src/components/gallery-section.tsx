@@ -2,7 +2,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 
 interface GalleryItem {
@@ -14,10 +14,21 @@ interface GalleryItem {
 
 const categories = ['All', 'Gym', 'Couple', 'Funny', 'Memories'];
 
+// Fisher-Yates shuffle
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 export default function GallerySection() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [hoveredId, setHoveredId] = useState<number | null>(null);
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+  const [shuffledItems, setShuffledItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,6 +45,7 @@ export default function GallerySection() {
         }));
         
         setGalleryItems(items);
+        setShuffledItems(shuffleArray(items));
       } catch (error) {
         console.error('Error loading photos:', error);
       } finally {
@@ -46,7 +58,7 @@ export default function GallerySection() {
 
   const filteredItems =
     activeCategory === 'All'
-      ? galleryItems
+      ? shuffledItems
       : galleryItems.filter((item) => item.category === activeCategory);
 
   return (
