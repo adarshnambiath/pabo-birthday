@@ -117,19 +117,14 @@ export default function AadyaSection() {
               {/* Image Container */}
               <div className="relative h-full w-full overflow-hidden rounded-3xl border border-white/10">
                 <Image
-                  src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800&q=80"
-                  alt="Couple placeholder"
+                  src="/photos/couple.jpg"
+                  alt="Pabo and Aadya"
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 {/* Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                
-                {/* Placeholder Notice */}
-                <div className="absolute bottom-4 left-4 rounded-full bg-black/50 px-3 py-1 text-xs text-white/70 backdrop-blur-sm">
-                  Add your couple photo here 💕
-                </div>
               </div>
 
               {/* Floating Elements */}

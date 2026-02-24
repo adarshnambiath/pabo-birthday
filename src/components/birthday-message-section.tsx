@@ -169,7 +169,7 @@ export default function BirthdayMessageSection() {
                 transition={{ delay: 1 }}
                 className="mt-8 border-t border-white/10 pt-6"
               >
-                <p className="text-gray-500">With love, admiration, and a healthy fear of your financial advice,</p>
+                <p className="text-gray-500">With love, admiration, and fear</p>
                 <p className="mt-2 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-xl font-semibold text-transparent">
                   Your Friends 🎉
                 </p>
