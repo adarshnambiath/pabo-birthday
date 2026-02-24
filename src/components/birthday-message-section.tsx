@@ -157,8 +157,8 @@ export default function BirthdayMessageSection() {
               
               <div className="relative space-y-6 text-lg leading-relaxed text-gray-300 sm:text-xl">
                 <p>
-                  To the guy who treats every day like it&apos;s leg day, every conversation like a
-                  chance to mention Claude, and every spreadsheet like a work of art...
+                  To the guy who treats every day like it&apos;s a hackathon, every conversation a
+                  chance to mention his, Claude{'<'}3, and every statement like a movie dialogue
                 </p>
                 <p>
                   May your <span className="text-cyan-400">gains</span> be infinite, your{' '}

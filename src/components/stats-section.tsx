@@ -102,8 +102,8 @@ const stats = [
     numValue: 365,
   },
   {
-    label: 'Claude Usage',
-    value: 'addicted',
+    label: 'Claude Tokens',
+    value: '128000',
     suffix: '+',
     gradient: 'from-orange-500 to-red-500',
   },
