@@ -1,6 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef } from 'react';
 import { Bot, TrendingUp, Cpu, Sparkles, Zap, BarChart3 } from 'lucide-react';
 
 const features = [
@@ -27,30 +28,46 @@ const features = [
 ];
 
 export default function AIFinanceSection() {
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+  
+  const orb1Y = useTransform(scrollYProgress, [0, 1], [80, -80]);
+  const orb2Y = useTransform(scrollYProgress, [0, 1], [40, -120]);
+  const gridY = useTransform(scrollYProgress, [0, 1], [20, -40]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [40, -40]);
+
   return (
-    <section className="relative overflow-hidden bg-black py-24 sm:py-32">
-      {/* Futuristic Background - Static gradient */}
-      <div className="absolute inset-0">
-        <div className="absolute left-1/4 top-1/4 h-96 w-96 rounded-full bg-orange-500/10 blur-[128px]" />
-        <div className="absolute bottom-1/4 right-1/4 h-96 w-96 rounded-full bg-yellow-500/10 blur-[128px]" />
-      </div>
+    <section ref={sectionRef} className="relative overflow-hidden bg-black py-24 sm:py-32">
+      {/* Futuristic Background - Multiple parallax layers */}
+      <motion.div className="absolute left-1/4 top-1/4 h-96 w-96 rounded-full bg-orange-500/10 blur-[128px]" style={{ y: orb1Y }} />
+      <motion.div className="absolute bottom-1/4 right-1/4 h-96 w-96 rounded-full bg-yellow-500/10 blur-[128px]" style={{ y: orb2Y }} />
 
       {/* Grid Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(251,146,60,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(251,146,60,0.03)_1px,transparent_1px)] bg-[size:100px_100px]" />
+      <motion.div 
+        style={{ y: gridY }}
+        className="absolute inset-0 bg-[linear-gradient(rgba(251,146,60,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(251,146,60,0.03)_1px,transparent_1px)] bg-[size:100px_100px]" 
+      />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          style={{ y: contentY }}
+          initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6 }}
           className="mb-16 text-center"
         >
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-2">
+          <motion.div 
+            whileHover={{ scale: 1.05, y: -2 }}
+            className="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-2"
+          >
             <Sparkles className="h-4 w-4 text-amber-400" />
             <span className="text-sm font-medium text-amber-400">AI + Finance Mode</span>
-          </div>
+          </motion.div>
           
           <h2 className="mb-4 text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">
             Where{' '}
@@ -58,7 +75,12 @@ export default function AIFinanceSection() {
               <span className="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-500 bg-clip-text text-transparent">
                 Intelligence
               </span>
-              <Zap className="absolute -right-8 -top-4 h-6 w-6 text-yellow-400" />
+              <motion.div
+                animate={{ y: [-2, 2, -2], scale: [1, 1.1, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <Zap className="absolute -right-8 -top-4 h-6 w-6 text-yellow-400" />
+              </motion.div>
             </span>
             {' '}Meets Capital
           </h2>
@@ -74,10 +96,11 @@ export default function AIFinanceSection() {
             {features.map((feature, index) => (
               <motion.div
                 key={feature.title}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
+                whileHover={{ scale: 1.03, y: -5 }}
                 className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-all duration-200 hover:border-amber-500/30 hover:bg-white/10"
               >
                 {/* Glassmorphism Effect */}

@@ -1,8 +1,8 @@
 
 'use client';
 
-import { motion } from 'framer-motion';
-import { useState, useEffect, useMemo } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 interface GalleryItem {
@@ -61,18 +61,29 @@ export default function GallerySection() {
       ? shuffledItems
       : galleryItems.filter((item) => item.category === activeCategory);
 
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+  
+  const backgroundY = useTransform(scrollYProgress, [0, 1], [100, -100]);
+
   return (
-    <section className="relative overflow-hidden bg-black py-24 sm:py-32">
+    <section ref={sectionRef} className="relative overflow-hidden bg-black py-24 sm:py-32">
       {/* Background */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(251,146,60,0.08),transparent_70%)]" />
+      <motion.div 
+        style={{ y: backgroundY }}
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(251,146,60,0.08),transparent_70%)]" 
+      />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 50, scale: 0.9 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6, type: "spring" }}
           className="mb-12 text-center"
         >
           <h2 className="mb-4 text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">
@@ -95,9 +106,11 @@ export default function GallerySection() {
           className="mb-8 flex flex-wrap justify-center gap-3"
         >
           {categories.map((category) => (
-            <button
+            <motion.button
               key={category}
               onClick={() => setActiveCategory(category)}
+              whileHover={{ scale: 1.08, y: -3 }}
+              whileTap={{ scale: 0.95 }}
               className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-200 ${
                 activeCategory === category
                   ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg shadow-orange-500/25'
@@ -105,7 +118,7 @@ export default function GallerySection() {
               }`}
             >
               {category}
-            </button>
+            </motion.button>
           ))}
         </motion.div>
 
@@ -133,11 +146,12 @@ export default function GallerySection() {
               <motion.div
                 key={item.id}
                 layout
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.4, delay: index * 0.03 }}
-                className="group relative aspect-square overflow-hidden rounded-2xl"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                whileHover={{ scale: 1.05, y: -8 }}
+                transition={{ duration: 0.3 }}
+                className="group relative aspect-square overflow-hidden rounded-2xl cursor-pointer"
                 onMouseEnter={() => setHoveredId(item.id)}
                 onMouseLeave={() => setHoveredId(null)}
               >
@@ -197,7 +211,7 @@ export default function GallerySection() {
             transition={{ delay: 0.5 }}
             className="mt-8 text-center text-sm text-gray-500"
           >
-            📸 {galleryItems.length} photos loaded
+            {galleryItems.length} photos loaded
           </motion.p>
         )}
       </div>

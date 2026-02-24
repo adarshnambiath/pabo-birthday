@@ -1,7 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useEffect, useState, useRef } from 'react';
 import { Sparkles, PartyPopper, Gift, Cake, Star } from 'lucide-react';
 
 const Confetti = () => {
@@ -34,11 +34,10 @@ const Confetti = () => {
             left: `${particle.x}%`,
             backgroundColor: particle.color,
           }}
-          initial={{ y: -20, opacity: 1, rotate: 0 }}
+          initial={{ y: -20, opacity: 1 }}
           animate={{
             y: '100vh',
             opacity: [1, 1, 0],
-            rotate: 360,
             x: [0, particle.drift, particle.drift * 0.5],
           }}
           transition={{
@@ -55,24 +54,37 @@ const Confetti = () => {
 
 export default function BirthdayMessageSection() {
   const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+  
+  const orb1Y = useTransform(scrollYProgress, [0, 1], [100, -150]);
+  const orb2Y = useTransform(scrollYProgress, [0, 1], [50, -100]);
+  const orb3Y = useTransform(scrollYProgress, [0, 1], [80, -80]);
+  const gridY = useTransform(scrollYProgress, [0, 1], [30, -50]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [50, -50]);
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-black py-24 sm:py-32">
-      {/* Animated Background */}
-      <div className="absolute inset-0">
-        <div className="absolute left-1/4 top-1/3 h-[600px] w-[600px] animate-pulse rounded-full bg-cyan-500/20 blur-[200px]" />
-        <div className="absolute bottom-1/3 right-1/4 h-[500px] w-[500px] animate-pulse rounded-full bg-purple-500/20 blur-[200px]" style={{ animationDelay: '1s' }} />
-        <div className="absolute left-1/2 top-1/2 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 animate-pulse rounded-full bg-pink-500/15 blur-[180px]" style={{ animationDelay: '2s' }} />
-      </div>
+    <section ref={sectionRef} className="relative min-h-screen overflow-hidden bg-black py-24 sm:py-32">
+      {/* Animated Background - Parallax orbs */}
+      <motion.div className="absolute left-1/4 top-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/20 blur-[200px]" style={{ y: orb1Y }} />
+      <motion.div className="absolute bottom-1/3 right-1/4 h-[500px] w-[500px] rounded-full bg-purple-500/20 blur-[200px]" style={{ y: orb2Y }} />
+      <motion.div className="absolute left-1/2 top-1/2 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-pink-500/15 blur-[180px]" style={{ y: orb3Y }} />
 
       {/* Confetti */}
       <Confetti />
 
-      {/* Grid Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
+      {/* Grid Pattern - Parallax */}
+      <motion.div 
+        style={{ y: gridY }}
+        className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" 
+      />
 
       <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <motion.div
+          style={{ y: contentY }}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1, transition: { duration: 1 } }}
           viewport={{ once: true }}
@@ -171,7 +183,7 @@ export default function BirthdayMessageSection() {
               >
                 <p className="text-gray-500">With love, admiration, and fear</p>
                 <p className="mt-2 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-xl font-semibold text-transparent">
-                  Your Friends 🎉
+                  Your Friends
                 </p>
               </motion.div>
             </div>

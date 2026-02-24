@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
+import { motion, useMotionValue, useTransform, animate, useScroll } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { useInView } from 'framer-motion';
 
@@ -39,7 +39,8 @@ function StatCard({ label, value, suffix = '', gradient, delay, isNumber = false
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay }}
-      className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black/50 p-6 backdrop-blur-sm transition-transform duration-200 hover:-translate-y-1"
+      whileHover={{ scale: 1.05, y: -5 }}
+      className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black/50 p-6 backdrop-blur-sm"
     >
       {/* Animated Background Glow */}
       <div
@@ -73,72 +74,74 @@ function StatCard({ label, value, suffix = '', gradient, delay, isNumber = false
 const stats = [
   {
     label: 'Bench Press',
-    value: '∞',
+    value: '225',
     suffix: 'kg',
     gradient: 'from-orange-500 to-red-500',
   },
   {
     label: 'Sleep Schedule',
-    value: 'Broken',
+    value: '12 hrs',
     gradient: 'from-yellow-400 to-orange-500',
   },
   {
     label: 'AI Usage',
-    value: 'Concerning',
+    value: 'Anti AI',
     gradient: 'from-amber-400 to-yellow-500',
   },
   {
-    label: 'Rizz Index',
-    value: 'Elite',
+    label: 'Ladies Man',
+    value: 'only likes Aadya',
     gradient: 'from-orange-400 to-amber-500',
   },
   {
     label: 'Gym Sessions',
-    value: '365',
+    value: 'does not miss a day',
     suffix: '/yr',
     gradient: 'from-yellow-500 to-orange-500',
     isNumber: true,
     numValue: 365,
   },
   {
-    label: 'Claude Conversations',
-    value: '9999',
+    label: 'Claude Usage',
+    value: 'addicted',
     suffix: '+',
     gradient: 'from-orange-500 to-red-500',
-    isNumber: true,
-    numValue: 9999,
-  },
-  {
-    label: 'Portfolio Returns',
-    value: '420',
-    suffix: '%',
-    gradient: 'from-amber-500 to-orange-500',
-    isNumber: true,
-    numValue: 420,
-  },
-  {
-    label: 'Aadya Love Level',
-    value: '∞',
-    gradient: 'from-yellow-400 to-orange-500',
   },
 ];
 
 export default function StatsSection() {
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+  
+  const gridY = useTransform(scrollYProgress, [0, 1], [50, -80]);
+  const glowY = useTransform(scrollYProgress, [0, 1], [100, -100]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [30, -30]);
+
   return (
-    <section className="relative overflow-hidden bg-black py-24 sm:py-32">
-      {/* Background Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:48px_48px]" />
+    <section ref={sectionRef} className="relative overflow-hidden bg-black py-24 sm:py-32">
+      {/* Background Grid - Parallax */}
+      <motion.div 
+        style={{ y: gridY }}
+        className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:48px_48px]" 
+      />
       
-      {/* Radial Gradient */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(251,146,60,0.1),transparent_50%)]" />
+      {/* Radial Gradient - Parallax */}
+      <motion.div 
+        style={{ y: glowY }}
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(251,146,60,0.1),transparent_50%)]" 
+      />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          style={{ y: contentY }}
+          initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6 }}
           className="mb-16 text-center"
         >
           <h2 className="mb-4 text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">
@@ -153,7 +156,7 @@ export default function StatsSection() {
         </motion.div>
 
         {/* Stats Grid */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {stats.map((stat, index) => (
             <StatCard
               key={stat.label}

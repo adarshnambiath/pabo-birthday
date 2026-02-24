@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { Dumbbell, Brain, TrendingUp, BookOpen, Laugh } from 'lucide-react';
@@ -69,18 +69,35 @@ const itemVariants = {
 
 export default function AboutSection() {
   const ref = useRef(null);
+  const sectionRef = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
+  
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+  
+  const backgroundY = useTransform(scrollYProgress, [0, 1], [100, -100]);
+  const gridY = useTransform(scrollYProgress, [0, 1], [50, -50]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [30, -30]);
 
   return (
-    <section className="relative overflow-hidden bg-black py-24 sm:py-32">
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(251,146,60,0.1),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#0a0a0a_1px,transparent_1px),linear-gradient(to_bottom,#0a0a0a_1px,transparent_1px)] bg-[size:64px_64px] opacity-20" />
+    <section ref={sectionRef} className="relative overflow-hidden bg-black py-24 sm:py-32">
+      {/* Background Effects - Parallax layers */}
+      <motion.div 
+        style={{ y: backgroundY }}
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(251,146,60,0.1),transparent_50%)]" 
+      />
+      <motion.div 
+        style={{ y: gridY }}
+        className="absolute inset-0 bg-[linear-gradient(to_right,#0a0a0a_1px,transparent_1px),linear-gradient(to_bottom,#0a0a0a_1px,transparent_1px)] bg-[size:64px_64px] opacity-20" 
+      />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          style={{ y: contentY }}
+          initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
@@ -109,7 +126,8 @@ export default function AboutSection() {
             <motion.div
               key={trait.title}
               variants={itemVariants}
-              className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-6 backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:shadow-2xl hover:-translate-y-1`}
+              whileHover={{ scale: 1.03, y: -8 }}
+              className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-6 backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:shadow-2xl`}
             >
               {/* Glow Effect */}
               <div

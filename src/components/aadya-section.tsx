@@ -1,9 +1,9 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Heart, Sparkles, Stars } from 'lucide-react';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface FloatingHeart {
   id: number;
@@ -41,7 +41,6 @@ function FloatingHearts() {
           initial={{ y: '100vh' }}
           animate={{
             y: '-10vh',
-            rotate: [0, 10, -10, 0],
           }}
           transition={{
             duration: heart.duration,
@@ -58,13 +57,22 @@ function FloatingHearts() {
 }
 
 export default function AadyaSection() {
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+  
+  const orb1Y = useTransform(scrollYProgress, [0, 1], [100, -100]);
+  const orb2Y = useTransform(scrollYProgress, [0, 1], [50, -150]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const imageY = useTransform(scrollYProgress, [0, 1], [60, -60]);
+
   return (
-    <section className="relative overflow-hidden bg-black py-24 sm:py-32">
-      {/* Romantic Background */}
-      <div className="absolute inset-0">
-        <div className="absolute left-1/3 top-1/4 h-[500px] w-[500px] rounded-full bg-pink-500/10 blur-[150px]" />
-        <div className="absolute bottom-1/4 right-1/3 h-[400px] w-[400px] rounded-full bg-rose-500/10 blur-[120px]" />
-      </div>
+    <section ref={sectionRef} className="relative overflow-hidden bg-black py-24 sm:py-32">
+      {/* Romantic Background - Parallax orbs */}
+      <motion.div className="absolute left-1/3 top-1/4 h-[500px] w-[500px] rounded-full bg-pink-500/10 blur-[150px]" style={{ y: orb1Y }} />
+      <motion.div className="absolute bottom-1/4 right-1/3 h-[400px] w-[400px] rounded-full bg-rose-500/10 blur-[120px]" style={{ y: orb2Y }} />
 
       {/* Floating Hearts */}
       <FloatingHearts />
@@ -72,7 +80,8 @@ export default function AadyaSection() {
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          style={{ y: contentY }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
@@ -104,6 +113,7 @@ export default function AadyaSection() {
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           {/* Image Side */}
           <motion.div
+            style={{ y: imageY }}
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -159,17 +169,8 @@ export default function AadyaSection() {
                 <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-rose-500/5" />
                 <p className="relative text-lg leading-relaxed text-gray-300">
                   Beside every great man is someone rolling their eyes at his jokes.{' '}
-                  <span className="text-pink-400">Aadya</span> is that person — the one who keeps
-                  Pabo grounded while he&apos;s busy trying to optimize the universe.
-                </p>
-              </div>
-
-              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
-                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-red-500/5" />
-                <p className="relative text-lg leading-relaxed text-gray-300">
-                  She&apos;s the calm to his chaos, the logic to his &quot;let me just try one more
-                  trading strategy,&quot; and probably the only person who can out-debate him (but
-                  don&apos;t tell him that).
+                  <span className="text-pink-400">Aadya</span> is that person: the one who keeps
+                  Pabo grounded while he&apos;s busy trying to bicker with gemini.
                 </p>
               </div>
 
